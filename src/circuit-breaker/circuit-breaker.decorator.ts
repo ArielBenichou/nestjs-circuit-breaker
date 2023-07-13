@@ -27,8 +27,8 @@ export function CircuitBreaker(options?: { maxFailure?: number, requestsThreshol
                         const result = await originalMethod.apply(this, args);
                         if (status === "HALF_OPEN") {
                             status = "CLOSED";
-                            failCount = 0;
                         }
+                        failCount = 0;
                         return result;
                     } catch (error) {
                         failCount += status === "CLOSED" ? 1 : 0;
