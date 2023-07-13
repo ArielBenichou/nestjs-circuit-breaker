@@ -1,0 +1,30 @@
+shape: sequence_diagram
+ctl: Controller
+cb: Circuit Breaker
+srv: Service
+
+Normal Closed Behavior: {
+  ctl.success -> cb.success: Request
+  cb.success -> srv.success: Request
+  cb.success <- srv.success: OK
+  ctl.success <- cb.success
+}
+
+Failure Closed Behavior: {
+  ctl.fail -> cb.fail: Request
+  cb.fail -> srv.fail: Request
+  cb.fail <- srv.fail: {
+    label: Fail!
+    style: {
+      stroke: red
+    }
+  }
+  cb.fail -> cb.fail: Set to OPEN
+  ctl.fail <- cb.fail: Failure
+}
+
+Request when Open: {
+  ctl.fail -> cb.fail: Request
+  ctl.fail <- cb.fail: Failure, Circuit Open
+}
+
